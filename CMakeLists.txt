@@ -2,8 +2,8 @@ add_executable(camera
         camera.c
         )
 
-# pull in common dependencies
-target_link_libraries(camera pico_stdlib)
+# pull in common dependencies and additional i2c hardware support
+target_link_libraries(camera pico_stdlib hardware_i2c)
 
 # create map/bin/hex file etc.
 pico_add_extra_outputs(camera)
