@@ -38,8 +38,11 @@ int main() {
     printf("value ad 0x00 0xAA=%u ?\n", rxdata);
      int i2c_read_blocking(i2c_inst_t *i2c, uint8_t addr, uint8_t *dst, size_t len, bool nostop);
 
-    i2c_read_blocking(i2c_default, 0x01,&rxdata, 1, false);
+    i2c_read_blocking(i2c_default, 0x01, &rxdata, 1, false);
     i2c_read_blocking(i2c_default, 0x02, &rxdata, 1, false);
     i2c_read_blocking(i2c_default, 0x03, &rxdata, 1, false);
-    while(1) {}
+    while(1) {
+    	printf("value at 0x00 0xAA=%u ?\n", rxdata);
+    	
+    }
 }
