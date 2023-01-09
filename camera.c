@@ -16,9 +16,11 @@ bool reserved_addr(uint8_t addr) {
 int main() {
     stdio_init_all();
     printf("camera prg starting************");
-    clocks_init();
-    gpio_init(22);
-    clock_gpio_init(22, CLOCKS_CLK_GPOUT0_CTRL_AUXSRC_VALUE_CLK_SYS, 10);
+    //clocks_init();
+    clock_gpio_init(21, CLOCKS_CLK_GPOUT0_CTRL_AUXSRC_VALUE_CLK_SYS, 10);
+
+    //clock_gpio_init(21, clk_usb, 2);
+    //clock_gpio_init(21, CLOCKS_CLK_GPOUT0_CTRL_AUXSRC_VALUE_CLK_SYS, 10);
     i2c_init(i2c_default, 100 * 1000);
     gpio_set_function(16, GPIO_FUNC_I2C);
     gpio_set_function(17, GPIO_FUNC_I2C);
