@@ -19,7 +19,7 @@ int main() {
     //clocks_init();
     clock_gpio_init(21, CLOCKS_CLK_GPOUT0_CTRL_AUXSRC_VALUE_CLK_SYS, 10);
 
-/*    //clock_gpio_init(21, clk_usb, 2);
+    //clock_gpio_init(21, clk_usb, 2);
     //clock_gpio_init(21, CLOCKS_CLK_GPOUT0_CTRL_AUXSRC_VALUE_CLK_SYS, 10);
     i2c_init(i2c_default, 100 * 1000);
     gpio_set_function(16, GPIO_FUNC_I2C);
@@ -57,6 +57,6 @@ int main() {
     }
     printf("Done. \n");
     }
-*/
+
 }
 
