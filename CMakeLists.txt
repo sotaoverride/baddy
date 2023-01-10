@@ -6,8 +6,8 @@ add_executable(camera
 target_link_libraries(camera pico_stdlib hardware_i2c)
 
 # enable usb output, disable uart output
-#pico_enable_stdio_usb(camera 1)
-#pico_enable_stdio_uart(camera 0)
+pico_enable_stdio_usb(camera 1)
+pico_enable_stdio_uart(camera 0)
 
 # create map/bin/hex file etc.
 pico_add_extra_outputs(camera)
