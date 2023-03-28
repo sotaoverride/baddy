@@ -20,6 +20,9 @@ bool reserved_addr(uint8_t addr) {
 #define TOTAL_LINE_DATA (PIXELS_IN_LINE * BYTES_PER_PIXEL_Y)
 #define LINES_IN_FRAME 30 // *2 
 #define VBLANK_LINES (3+17)
+uint8_t camera_read(uint8_t regaddr);
+void camera_write(uint8_t regaddr, uint8_t value);
+
 //double check GPIO number for vsync/pclk
 uint32_t byte_count =0;
 static uint8_t href = 19;
@@ -76,18 +79,9 @@ void irq_dispatch(uint gpio, uint32_t mask) {
 
 
 void init(){
-	uint8_t val = 0x08;
-	uint8_t val2 = 0x0a;
-	uint8_t buf[2];
-	buf[0] = 0x0c;
-	buf[1] = val;
-	i2c_write_blocking(i2c_default, 0x21, buf, 2, false);
-	buf[0]=0x12;
-	buf[1]=val2;
-	i2c_write_blocking(i2c_default, 0x21, buf, 2, false);
-	buf[0] = 0x3e;
-        buf[1] = val;
-	i2c_write_blocking(i2c_default, 0x21, buf, 2, false);
+	camera_write(0x0c, 0x08);
+	camera_write(0x12,0x0a);
+	camera_write(0x3e,0x08);
 
 //	i2c_write_blocking(i2c_default, 0x3e, &val, 1, true);
 
@@ -118,13 +112,27 @@ uint8_t get_byte_y(){
  return val;
 }
 
+uint8_t camera_read(uint8_t regaddr){
+    	uint8_t val[4] = {0,0,0,0};
+	const uint8_t* ptr = &regaddr;
+	i2c_write_blocking(i2c_default, 0x21, ptr, 1, false);
+        i2c_read_blocking(i2c_default, 0x21, &val[0], 1, false);
+        return val[0];
+}
+void camera_write(uint8_t regaddr, uint8_t value){
+        uint8_t buf[2];
+        buf[0] = regaddr;
+        buf[1] = value;
+        i2c_write_blocking(i2c_default, 0x21, buf, 2, false);
+}
+
+
+
+
+
 
 int main() {
 
-	uint8_t regaddr[2] =  {0x1c, 0x0c};
-    	const uint8_t* ptr= &regaddr[0];
-	const uint8_t* ptr2 = &regaddr[1];
-    	uint8_t val[4] = {0,0,0,0};
 	stdio_init_all();
 	sleep_ms(3000);
 	printf("camera prg starting\n");
@@ -166,22 +174,13 @@ int main() {
 	gpio_set_dir(pclk, GPIO_IN);
 	gpio_init(14);
         gpio_set_dir(14, GPIO_OUT);
-	i2c_write_blocking(i2c_default, 0x21, ptr2, 1, false);
-        i2c_read_blocking(i2c_default, 0x21, &val[0], 1, false);
-        printf("0x0c default value=============>%02x \n", val[0]);
+        printf("0x0c default value=============>%02x \n", camera_read(0x0c));
 
 	init();
-	i2c_write_blocking(i2c_default, 0x21, ptr2, 1, false);
-        i2c_read_blocking(i2c_default, 0x21, &val[0], 1, false);
-        printf("0x0c custom value=============>%02x \n", val[0]);
+        printf("0x0c custom value=============>%02x \n", camera_read(0x0c));
 	
 	memset(line_data, 99, sizeof(line_data));
-	i2c_write_blocking(i2c_default, 0x21, ptr, 1, false);
-    	i2c_read_blocking(i2c_default, 0x21, &val[0], 1, false);
-	printf("=============>%02x \n", val[0]);
-	i2c_write_blocking(i2c_default, 0x21, ptr, 1, false);
-        i2c_read_blocking(i2c_default, 0x21, &val[0], 1, false);
-        printf("=============>%02x \n", val[0]);
+	printf("=============>%02x \n", camera_read(0x0c));
 
 	while(!gpio_get(vsync)){} while(gpio_get(vsync)){}
 
