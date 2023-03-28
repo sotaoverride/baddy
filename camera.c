@@ -85,6 +85,9 @@ void init(){
 	buf[0]=0x12;
 	buf[1]=val2;
 	i2c_write_blocking(i2c_default, 0x21, buf, 2, false);
+	buf[0] = 0x3e;
+        buf[1] = val;
+	i2c_write_blocking(i2c_default, 0x21, buf, 2, false);
 
 //	i2c_write_blocking(i2c_default, 0x3e, &val, 1, true);
 
@@ -118,8 +121,9 @@ uint8_t get_byte_y(){
 
 int main() {
 
-	uint8_t regaddr[1] =  {0x1c};
+	uint8_t regaddr[2] =  {0x1c, 0x0c};
     	const uint8_t* ptr= &regaddr[0];
+	const uint8_t* ptr2 = &regaddr[1];
     	uint8_t val[4] = {0,0,0,0};
 	stdio_init_all();
 	sleep_ms(3000);
@@ -128,7 +132,7 @@ int main() {
 	gpio_init(21);
 	gpio_set_dir(21, GPIO_OUT);
 	//CLOCKS_CLK_GPOUT0_CTRL_AUXSRC_VALUE_CLK_SYS
-	clock_gpio_init(21, CLOCKS_CLK_GPOUT0_CTRL_AUXSRC_VALUE_CLK_SYS, 10);
+	clock_gpio_init(21, CLOCKS_CLK_GPOUT0_CTRL_AUXSRC_VALUE_CLK_SYS, 20);
 
 	//clock_gpio_init(21, clk_usb, 2);
 	//clock_gpio_init(21, CLOCKS_CLK_GPOUT0_CTRL_AUXSRC_VALUE_CLK_SYS, 9);
@@ -162,8 +166,15 @@ int main() {
 	gpio_set_dir(pclk, GPIO_IN);
 	gpio_init(14);
         gpio_set_dir(14, GPIO_OUT);
+	i2c_write_blocking(i2c_default, 0x21, ptr2, 1, false);
+        i2c_read_blocking(i2c_default, 0x21, &val[0], 1, false);
+        printf("0x0c default value=============>%02x \n", val[0]);
 
 	init();
+	i2c_write_blocking(i2c_default, 0x21, ptr2, 1, false);
+        i2c_read_blocking(i2c_default, 0x21, &val[0], 1, false);
+        printf("0x0c custom value=============>%02x \n", val[0]);
+	
 	memset(line_data, 99, sizeof(line_data));
 	i2c_write_blocking(i2c_default, 0x21, ptr, 1, false);
     	i2c_read_blocking(i2c_default, 0x21, &val[0], 1, false);
