@@ -113,10 +113,12 @@ uint8_t get_byte_y(){
 }
 
 uint8_t camera_read(uint8_t regaddr){
+	uint8_t buf[1];
     	uint8_t val[4] = {0,0,0,0};
-	const uint8_t* ptr = &regaddr;
-	i2c_write_blocking(i2c_default, 0x21, ptr, 1, false);
-        i2c_read_blocking(i2c_default, 0x21, &val[0], 1, false);
+	buf[0] = regaddr;
+	i2c_write_blocking(i2c_default, 0x21, buf, 1, false);
+	buf[0] = 0;
+        i2c_read_blocking(i2c_default, 0x21, val, 1, false);
         return val[0];
 }
 void camera_write(uint8_t regaddr, uint8_t value){
