@@ -79,11 +79,11 @@ void irq_dispatch(uint gpio, uint32_t mask) {
 
 
 void init(){
-	camera_write(0x0c, 0x08);
-	camera_write(0x12,0x0a);
-	camera_write(0x3e,0x08);
+	camera_write(0x42, 0x08); //com17 enable dsp color bar
+	camera_write(0x12,0x0a);// set qcif mode and enable color bar with 0x0a disable with 0x8 
+//	camera_write(0x0c, 0x08);
 
-//	i2c_write_blocking(i2c_default, 0x3e, &val, 1, true);
+
 
 	gpio_set_irq_enabled_with_callback(href, GPIO_IRQ_EDGE_RISE, true, &irq_dispatch);
 	gpio_set_irq_enabled_with_callback(vsync, GPIO_IRQ_EDGE_FALL, true, &irq_dispatch);
@@ -137,11 +137,8 @@ int main() {
 	stdio_init_all();
 	sleep_ms(3000);
 	printf("camera prg starting\n");
-	clocks_init();
-	gpio_init(21);
-	gpio_set_dir(21, GPIO_OUT);
 	//CLOCKS_CLK_GPOUT0_CTRL_AUXSRC_VALUE_CLK_SYS
-	clock_gpio_init(21, CLOCKS_CLK_GPOUT0_CTRL_AUXSRC_VALUE_CLK_SYS, 20);
+	clock_gpio_init(21, CLOCKS_CLK_GPOUT0_CTRL_AUXSRC_VALUE_CLK_SYS, 8.5);
 
 	//clock_gpio_init(21, clk_usb, 2);
 	//clock_gpio_init(21, CLOCKS_CLK_GPOUT0_CTRL_AUXSRC_VALUE_CLK_SYS, 9);
