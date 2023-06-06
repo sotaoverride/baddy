@@ -35,15 +35,17 @@ uint8_t line_data[TOTAL_LINE_DATA];
 uint8_t frame_data[LINES_IN_FRAME][TOTAL_LINE_DATA];
 volatile int foo;
 uint32_t pixel_count = 0;
-uint8_t pattern[] = "-+*#";
+uint8_t pattern[] =  " .:!()/|}-=+*#%@";
 uint32_t read_data_pins(){
 	uint32_t all = gpio_get_all();
-	uint32_t d0123 = all & 0b1111;   /* I would have written 0xF instead of 0b  but its' teh same
+	if (!(all & (1 << 23))){
+		uint32_t d0123 = all & 0b1111;   /* I would have written 0xF instead of 0b  but its' teh same
 					    thing */
-	uint32_t d4567 = all & 0xf00;    /* or 0xb111100000000 */
-	return  ( (d4567 >> 4) | d0123);
+		uint32_t d4567 = all & 0xf00;    /* or 0xb111100000000 */
+		return  ( (d4567 >> 4) | d0123);
 	//	return gpio_get(0);
-
+	}
+	return 0;
 }
 
 /*read d0 - d7 on href rising edge after blanking*/
@@ -79,9 +81,9 @@ void irq_dispatch(uint gpio, uint32_t mask) {
 
 
 void init(){
-	camera_write(0x42, 0x08); //com17 enable dsp color bar
-	camera_write(0x12,0x0a);// set qcif mode and enable color bar with 0x0a disable with 0x8 
-//	camera_write(0x0c, 0x08);
+//	camera_write(0x42, 0x08); //com17 enable dsp color bar
+//	camera_write(0x12,0x0a);// set qcif mode and enable color bar with 0x0a disable with 0x8 
+	camera_write(0x12, 0x08);
 
 
 
@@ -97,8 +99,11 @@ uint32_t get_byte(){
  return val;
 }
 uint8_t get_byte_y(){
- while(!gpio_get(pclk)){} while(gpio_get(pclk)){}
- while(!gpio_get(pclk)){} while(gpio_get(pclk)){}
+ while(!gpio_get(pclk)){} 
+ while(gpio_get(pclk)){}
+ while(!gpio_get(pclk)){} 
+ //while(gpio_get(pclk)){}
+ //last gpio_get(pclk) combined with read_data_pins()
  uint8_t val = read_data_pins();
  //pixel_count++;
 // printf("pixel %d\n", val);
@@ -199,7 +204,7 @@ int main() {
 
 
 		for(int i=0; i <TOTAL_LINE_DATA; i++){
-			 printf("%c", pattern[frame_data[j][i] >> 6] );
+			 printf("%c", pattern[frame_data[j][i] >> 4] );
 		}
 		printf("\n");
 	}
