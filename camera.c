@@ -38,14 +38,11 @@ uint32_t pixel_count = 0;
 uint8_t pattern[] =  " .:!()/|}-=+*#%@";
 uint32_t read_data_pins(){
 	uint32_t all = gpio_get_all();
-	if (!(all & (1 << 23))){
-		uint32_t d0123 = all & 0b1111;   /* I would have written 0xF instead of 0b  but its' teh same
+	uint32_t d0123 = all & 0b1111;   /* I would have written 0xF instead of 0b  but its' teh same
 					    thing */
-		uint32_t d4567 = all & 0xf00;    /* or 0xb111100000000 */
-		return  ( (d4567 >> 4) | d0123);
+	uint32_t d4567 = all & 0xf00;    /* or 0xb111100000000 */
+	return  ( (d4567 >> 4) | d0123);
 	//	return gpio_get(0);
-	}
-	return 0;
 }
 
 /*read d0 - d7 on href rising edge after blanking*/
